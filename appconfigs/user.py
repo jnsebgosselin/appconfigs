@@ -86,3 +86,195 @@ class DefaultsConfig(cp.ConfigParser):
             for option, new_value in options.items():
                 self._set(section, option, new_value, False)
 
+class UserConfig(DefaultsConfig):
+    """UserConfig class based on ConfigParser."""
+
+    def __init__(self, name, defaults=None, load=True, version=None,
+                 path=None, backup=False, raw_mode=False):
+        DefaultsConfig.__init__(self, name, path)
+        self.raw = 1 if raw_mode else 0
+        self.backup = backup
+
+        self.defaults = defaults
+        if defaults is not None:
+            self.reset_to_defaults(save=False)
+        self._create_backup()
+
+        if load:
+            # Override Default options if config file exists.
+            self.read(self.filename(), encoding='utf-8')
+            self._save_new_defaults(defaults, version, path)
+
+            # Update Default options only if major/minor version is different.
+            old_version = self.get_version(version)
+            if StrictVersion(version) != StrictVersion(old_version):
+                self._create_backup(version=old_version)
+                self._update_defaults(defaults, old_version)
+                self._remove_deprecated_options(old_version)
+                self.set_version(version, save=False)
+            if defaults is None:
+                # If no defaults are defined, set .ini file settings as default
+                self.set_as_defaults()
+
+    def get_version(self, version='0.0.0'):
+        """Return configuration (not application!) version."""
+        return self.get('main', 'version', version)
+
+    def set_version(self, version='0.0.0', save=True):
+        """Set configuration (not application!) version"""
+        self.set('main', 'version', version, save=save)
+
+    def _load_old_defaults(self, old_version):
+        """Read old defaults."""
+        path = osp.join(
+            self.path, 'defaults', 'defaults-' + old_version + '.ini')
+        old_defaults = cp.ConfigParser()
+        old_defaults.read(path)
+        return old_defaults
+
+    def _save_new_defaults(self, defaults, new_version, path):
+        """Save new defaults."""
+        new_defaults = DefaultsConfig(name='defaults-' + new_version,
+                                      path=osp.join(path, 'defaults'))
+        if not osp.isfile(new_defaults.filename()):
+            new_defaults.set_defaults(defaults)
+            new_defaults._save()
+
+    def _create_backup(self, version=None):
+        """Create a backup of the current config file."""
+        if self.backup is True:
+            ini_fname = self.filename()
+            bak_fname = ("{}.bak".format(ini_fname) if version is None else
+                         "{}-{}.bak".format(ini_fname, version))
+            try:
+                shutil.copyfile(ini_fname, bak_fname)
+            except IOError:
+                pass
+
+    def _update_defaults(self, defaults, old_version, verbose=False):
+        """Update defaults after a change in version"""
+        old_defaults = self._load_old_defaults(old_version)
+        for section, options in defaults:
+            for option, new_value in options.items():
+                try:
+                    old_value = old_defaults.get(section, option)
+                except Exception:
+                    old_value = None
+                if old_value is None or str(new_value) != old_value:
+                    self._set(section, option, new_value, verbose)
+
+    def _remove_deprecated_options(self, old_version):
+        """
+        Remove options which are present in the .ini file but not in defaults
+        """
+        old_defaults = self._load_old_defaults(old_version)
+        for section in old_defaults.sections():
+            for option, _ in old_defaults.items(section, raw=self.raw):
+                if self.get_default(section, option) is NoDefault:
+                    try:
+                        self.remove_option(section, option)
+                        if len(self.items(section, raw=self.raw)) == 0:
+                            self.remove_section(section)
+                    except cp.NoSectionError:
+                        self.remove_section(section)
+
+    def set_as_defaults(self):
+        """Set defaults from the current config."""
+        self.defaults = []
+        for section in self.sections():
+            secdict = {}
+            for option, value in self.items(section, raw=self.raw):
+                secdict[option] = value
+            self.defaults.append((section, secdict))
+
+    def reset_to_defaults(self, save=True, verbose=False, section=None):
+        """Reset config to Default values"""
+        for sec, options in self.defaults:
+            if section is None or section == sec:
+                for option, value in options.items():
+                    self._set(sec, option, value, verbose)
+        if save:
+            self._save()
+
+    def get_default(self, section, option):
+        """
+        Get Default value for a given section and option.
+        (This method is useful for type checking in 'get' method)
+        """
+        for sec, options in self.defaults:
+            if sec == (section or 'main') and option in options:
+                return options[option]
+        else:
+            return NoDefault
+
+    def set_default(self, section, option, default_value):
+        """Set Default value for a given section and option."""
+        for sec, options in self.defaults:
+            if sec == (section or 'main'):
+                options[option] = default_value
+
+    def get(self, section, option, default=NoDefault):
+        """Get an option from the specified section."""
+        if not self.has_section(section):
+            if default is NoDefault:
+                raise cp.NoSectionError(section)
+            else:
+                self.add_section(section)
+
+        if not self.has_option(section, option):
+            if default is NoDefault:
+                raise cp.NoOptionError(option, section)
+            else:
+                self.set(section, option, default)
+                return default
+
+        value = cp.ConfigParser.get(self, section, option, raw=self.raw)
+
+        # Use type of default_value to parse value correctly
+        default_value = self.get_default(section, option)
+        if isinstance(default_value, bool):
+            value = ast.literal_eval(value)
+        elif isinstance(default_value, float):
+            value = float(value)
+        elif isinstance(default_value, int):
+            value = int(value)
+        elif isinstance(default_value, str):
+            pass
+        else:
+            try:
+                # lists, tuples, ...
+                value = ast.literal_eval(value)
+            except (SyntaxError, ValueError):
+                pass
+        return value
+
+    def set(self, section, option, value, verbose=False, save=True):
+        """Set an option for the specified section."""
+        default_value = self.get_default(section, option)
+        if default_value is NoDefault:
+            default_value = value
+            self.set_default(section, option, default_value)
+        if isinstance(default_value, bool):
+            value = bool(value)
+        elif isinstance(default_value, float):
+            value = float(value)
+        elif isinstance(default_value, int):
+            value = int(value)
+        elif isinstance(default_value, str):
+            pass
+        self._set(section, option, value, verbose)
+        if save:
+            self._save()
+
+    def remove_section(self, section):
+        """Remove the section from the configs and save to file."""
+        cp.ConfigParser.remove_section(self, section)
+        self._save()
+
+    def remove_option(self, section, option):
+        """
+        Remove the option in the specified section from the configs and
+        save to file.
+        """
+        cp.ConfigParser.remove_option(self, section, option)
+        self._save()
