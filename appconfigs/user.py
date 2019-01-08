@@ -67,8 +67,7 @@ class DefaultsConfig(cp.ConfigParser):
             self._write(filename)
         except EnvironmentError:
             try:
-                if osp.isfile(filename):
-                    os.remove(filename)
+                self.cleanup()
                 time.sleep(0.05)
                 self._write(filename)
             except Exception as e:
@@ -85,6 +84,12 @@ class DefaultsConfig(cp.ConfigParser):
         for section, options in defaults:
             for option, new_value in options.items():
                 self._set(section, option, new_value, False)
+
+    def cleanup(self):
+        """Remove .ini file associated to config."""
+        if osp.isfile(self.filename()):
+            os.remove(self.filename())
+
 
 class UserConfig(DefaultsConfig):
     """UserConfig class based on ConfigParser."""
