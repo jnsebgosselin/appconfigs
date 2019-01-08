@@ -87,8 +87,8 @@ class DefaultsConfig(cp.ConfigParser):
 
     def cleanup(self):
         """Remove .ini file associated to config."""
-        if osp.isfile(self.filename()):
-            os.remove(self.filename())
+        if osp.isfile(self.get_filename()):
+            os.remove(self.get_filename())
 
 
 class UserConfig(DefaultsConfig):
@@ -107,7 +107,7 @@ class UserConfig(DefaultsConfig):
 
         if load:
             # Override Default options if config file exists.
-            self.read(self.filename(), encoding='utf-8')
+            self.read(self.get_filename(), encoding='utf-8')
             self._save_new_defaults(defaults, version, path)
 
             # Update Default options only if major/minor version is different.
@@ -141,14 +141,14 @@ class UserConfig(DefaultsConfig):
         """Save new defaults."""
         new_defaults = DefaultsConfig(name='defaults-' + new_version,
                                       path=osp.join(path, 'defaults'))
-        if not osp.isfile(new_defaults.filename()):
+        if not osp.isfile(new_defaults.get_filename()):
             new_defaults.set_defaults(defaults)
             new_defaults._save()
 
     def _create_backup(self, version=None):
         """Create a backup of the current config file."""
         if self.backup is True:
-            ini_fname = self.filename()
+            ini_fname = self.get_filename()
             bak_fname = ("{}.bak".format(ini_fname) if version is None else
                          "{}-{}.bak".format(ini_fname, version))
             try:
