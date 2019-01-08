@@ -22,3 +22,10 @@ import configparser as cp
 from distutils.version import StrictVersion
 import shutil
 
+
+class NoDefault:
+    """Class that represents a default config value which is not set."""
+
+    def __repr__(self):
+        return '<default value not set>'
+
