@@ -209,6 +209,7 @@ def test_set_as_defaults(configdir, defaults):
     conf = UserConfig(NAME, defaults=defaults, load=True, path=configdir,
                       backup=True, version='0.1.0', raw_mode=True)
 
+    # Instantiate UserConfig again, but with defaults=None.
     del conf
     conf = UserConfig(NAME, defaults=None, load=True, path=configdir,
                       backup=True, version='0.1.0', raw_mode=True)
@@ -216,6 +217,32 @@ def test_set_as_defaults(configdir, defaults):
     for section, options in defaults:
         for option, value in options.items():
             assert conf.get_default(section, option) == value
+
+
+@pytest.mark.parametrize("save_value", [True, False])
+def test_reset_to_defaults(configdir, defaults, mocker, save_value):
+    """
+    Test resetting config values to defaults.
+    """
+    conf = UserConfig(NAME, defaults=defaults, load=True, path=configdir,
+                      backup=True, version='0.1.0', raw_mode=True)
+    conf._create_backup()
+
+    # Change the value of option#3 in main section.
+    conf.set('main', 'option#3', 65.23)
+    assert conf.get('main', 'option#3') == 65.23
+    assert conf.get_default('main', 'option#3') == 24.567
+    assert filecmp.cmp(
+        conf.get_filename(), conf.get_filename() + '.bak', shallow=False
+        ) is False
+
+    # Reset the config values to defaults.
+    conf.reset_to_defaults(save=save_value)
+    assert conf.get('main', 'option#3') == 24.567
+    assert conf.get_default('main', 'option#3') == 24.567
+    assert filecmp.cmp(
+        conf.get_filename(), conf.get_filename() + '.bak', shallow=False
+        ) is save_value
 
 
 if __name__ == "__main__":
