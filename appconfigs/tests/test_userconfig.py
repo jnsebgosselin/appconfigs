@@ -77,5 +77,30 @@ def test_get_values(configdir):
             assert conf_value == default_value
 
 
+def test_set_values(configdir, mocker):
+    """
+    Test that values are set correctly with the right type corresponding to
+    that of their default values if any.
+    """
+    conf = UserConfig(NAME, defaults=DEFAULTS, load=True, path=configdir,
+                      backup=True, version=CONF_VERSION, raw_mode=True)
+
+    option_new_expected = [
+        ('option#1', 34.678, '34.678'),
+        ('option#3', 34.678, 34.678),
+        ('option#4', 34.678, 34),
+        ('option#5', '', False),
+        ('option#5', 34.678, True),
+        ('option#999', 'some_str', 'some_str'),
+        ('option#999', 34.678, '34.678'),
+        ]
+
+    mocked_save = mocker.patch('appconfigs.user.UserConfig._save')
+    for i, (option, new_val, exp_val) in enumerate(option_new_expected):
+        conf.set('main', option, new_val)
+        assert conf.get('main', option) == exp_val
+        assert mocked_save.call_count == i + 1
+
+
 if __name__ == "__main__":
     pytest.main(['-x', osp.basename(__file__), '-v', '-rw', '-s'])
