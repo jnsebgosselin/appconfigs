@@ -238,6 +238,10 @@ class UserConfig(DefaultsConfig):
         for sec, options in self.defaults:
             if sec == (section or 'main'):
                 options[option] = default_value
+                break
+        else:
+            self.defaults.append(
+                (section, {option: default_value}))
 
     def get(self, section, option, default=NoDefault):
         """Get an option from the specified section."""

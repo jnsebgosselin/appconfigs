@@ -8,12 +8,13 @@
 # ---- Standard imports
 import os.path as osp
 import filecmp
+import configparser as cp
 
 # ---- Third party imports
 import pytest
 
 # ---- Local imports
-from appconfigs.user import UserConfig
+from appconfigs.user import UserConfig, NoDefault
 
 NAME = 'user_config_tests'
 CONF_VERSION = '0.1.0'
@@ -72,9 +73,32 @@ def test_get_values(configdir):
                       backup=True, version=CONF_VERSION, raw_mode=True)
 
     for section, options in DEFAULTS:
-        for option, default_value in options.items():
-            conf_value = conf.get(section, option)
-            assert conf_value == default_value
+        for option, value in options.items():
+            assert conf.get(section, option) == value
+
+    # Get a value of an option that does not exists without providing a
+    # default value.
+    assert conf.get_default('main', 'dummy') is NoDefault
+    with pytest.raises(cp.NoOptionError):
+        conf.get('main', 'dummy')
+
+    # Get a value of an option that does not exists while providing a
+    # default value.
+    assert conf.get_default('main', 'dummy') is NoDefault
+    assert conf.get('main', 'dummy', 8.234) == 8.234
+    assert conf.get_default('main', 'dummy') == 8.234
+
+    # Get a value from section that does not exists without providing a
+    # default value.
+    assert conf.get_default('dummy', 'dummy') is NoDefault
+    with pytest.raises(cp.NoSectionError):
+        conf.get('dummy', 'dummy')
+
+    # Get a value from section that does not exists while providing a
+    # default value.
+    assert conf.get_default('dummy', 'dummy') is NoDefault
+    assert conf.get('dummy', 'dummy', 'new_value') == 'new_value'
+    assert conf.get_default('dummy', 'dummy') == 'new_value'
 
 
 def test_set_values(configdir, mocker):
