@@ -21,7 +21,7 @@ environment:
     APPCONFIGS_VERSION: "v0.1.0.dev0"
 
   matrix:
-    - PYTHON: "C:\Python36-x64"
+    - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
 
