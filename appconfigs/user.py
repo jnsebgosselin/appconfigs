@@ -114,6 +114,7 @@ class UserConfig(DefaultsConfig):
             self._save_new_defaults(defaults, version, path)
 
             # Update Default options only if major/minor version is different.
+            self._check_version(version)
             old_version = self.get_version(version)
             if StrictVersion(version) != StrictVersion(old_version):
                 self._create_backup(version=old_version)
@@ -130,7 +131,24 @@ class UserConfig(DefaultsConfig):
 
     def set_version(self, version='0.0.0', save=True):
         """Set configuration (not application!) version"""
+        self._check_version(version)
         self.set('main', 'version', version, save=save)
+
+    @staticmethod
+    def _check_version(version):
+        """
+        Check that the format of version is as expected.
+        """
+        warning = ("Version number is incorrect: it must be a string "
+                   "with the X.Y.Z format.")
+        try:
+            version = StrictVersion(version)
+        except (ValueError, TypeError):
+            raise ValueError(warning)
+        else:
+            if len(version.version) != 3:
+                raise ValueError(warning)
+            return True
 
     def _load_old_defaults(self, old_version):
         """Read old defaults."""
