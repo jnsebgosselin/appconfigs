@@ -240,17 +240,8 @@ class UserConfig(DefaultsConfig):
 
         # Use type of default_value to parse value correctly
         default_value = self.get_default(section, option)
-        if isinstance(default_value, bool):
-            value = ast.literal_eval(value)
-        elif isinstance(default_value, float):
-            value = float(value)
-        elif isinstance(default_value, int):
-            value = int(value)
-        elif isinstance(default_value, str):
-            pass
-        else:
+        if not isinstance(default_value, str):
             try:
-                # lists, tuples, ...
                 value = ast.literal_eval(value)
             except (SyntaxError, ValueError):
                 pass
