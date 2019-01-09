@@ -111,13 +111,11 @@ def test_set_values(configdir, mocker):
                       backup=True, version=CONF_VERSION, raw_mode=True)
 
     # Set the value of options with default value.
-    params = [
-        ('main', 'option#1', 34.678, '34.678'),
-        ('main', 'option#3', 34.678, 34.678),
-        ('main', 'option#4', 34.678, 34),
-        ('main', 'option#5', '', False),
-        ('main', 'option#5', 34.678, True),
-        ]
+    params = [('main', 'option#1', 34.678, '34.678'),
+              ('main', 'option#3', 34.678, 34.678),
+              ('main', 'option#4', 34.678, 34),
+              ('main', 'option#5', '', False),
+              ('main', 'option#5', 34.678, True)]
 
     mocked_save = mocker.patch('appconfigs.user.UserConfig._save')
     for i, (section, option, new_value, expected_value) in enumerate(params):
@@ -126,10 +124,8 @@ def test_set_values(configdir, mocker):
         assert mocked_save.call_count == i + 1
 
     # Set the value of new options with no default value.
-    params = [
-        ('main', 'new_option', 'some_str'),
-        ('new_section', 'new_option', 12.123),
-        ]
+    params = [('main', 'new_option', 'some_str'),
+              ('new_section', 'new_option', 12.123)]
 
     mocked_save.reset_mock()
     for i, (section, option, new_value) in enumerate(params):
