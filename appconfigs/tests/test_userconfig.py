@@ -245,5 +245,17 @@ def test_reset_to_defaults(configdir, defaults, mocker, save_value):
         ) is save_value
 
 
+def test_cleanup(configdir, defaults):
+    """
+    Test cleaning up the configuration files.
+    """
+    conf = UserConfig(NAME, defaults=defaults, load=True, path=configdir,
+                      backup=True, version='0.1.0', raw_mode=True)
+
+    assert osp.exists(conf.get_filename())
+    conf.cleanup()
+    assert not osp.exists(conf.get_filename())
+
+
 if __name__ == "__main__":
     pytest.main(['-x', osp.basename(__file__), '-vv', '-rw', '-s'])
