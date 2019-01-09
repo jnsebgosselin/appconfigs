@@ -45,6 +45,8 @@ class DefaultsConfig(cp.ConfigParser):
         """
         if not self.has_section(section):
             self.add_section(section)
+        if not isinstance(value, str):
+            value = repr(value)
         if verbose:
             print('%s[ %s ] = %s' % (section, option, value))
         cp.ConfigParser.set(self, section, option, value)
@@ -266,8 +268,8 @@ class UserConfig(DefaultsConfig):
             value = float(value)
         elif isinstance(default_value, int):
             value = int(value)
-        elif isinstance(default_value, str):
-            pass
+        elif not isinstance(default_value, str):
+            value = repr(value)
         self._set(section, option, value, verbose)
         if save:
             self._save()
