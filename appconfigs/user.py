@@ -21,6 +21,7 @@ import time
 import configparser as cp
 from distutils.version import StrictVersion
 import shutil
+import copy
 
 
 class NoDefault:
@@ -44,6 +45,8 @@ class DefaultsConfig(cp.ConfigParser):
         """
         if not self.has_section(section):
             self.add_section(section)
+        if not isinstance(value, str):
+            value = repr(value)
         if verbose:
             print('%s[ %s ] = %s' % (section, option, value))
         cp.ConfigParser.set(self, section, option, value)
@@ -100,7 +103,7 @@ class UserConfig(DefaultsConfig):
         self.raw = 1 if raw_mode else 0
         self.backup = backup
 
-        self.defaults = defaults
+        self.defaults = copy.deepcopy(defaults)
         if defaults is not None:
             self.reset_to_defaults(save=False)
         self._create_backup()
@@ -265,8 +268,8 @@ class UserConfig(DefaultsConfig):
             value = float(value)
         elif isinstance(default_value, int):
             value = int(value)
-        elif isinstance(default_value, str):
-            pass
+        elif not isinstance(default_value, str):
+            value = repr(value)
         self._set(section, option, value, verbose)
         if save:
             self._save()
