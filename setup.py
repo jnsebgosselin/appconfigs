@@ -8,7 +8,7 @@
 """Installation script """
 
 import setuptools
-from distutils.core import setup
+from setuptools import setup
 from appconfigs import __version__, __project_url__
 
 LONG_DESCRIPTION = ("The appconfig module provides user configuration file "
