@@ -137,6 +137,19 @@ def test_set_values(configdir, mocker):
         assert mocked_save.call_count == i + 1
 
 
+def test_check_version(configdir):
+    """
+    Test the method that check whether the version format is valid.
+    """
+    # Test valid version formats.
+    for version in ['12.4.5', '12.4']:
+        assert UserConfig._check_version(version)
+
+    # Test not valid version formats.
+    for version in ['0.1.5.dev0', 12, '12', '1.3.4.2', (0, 1, 3)]:
+        with pytest.raises(ValueError):
+            UserConfig._check_version(version)
+
 
 if __name__ == "__main__":
     pytest.main(['-x', osp.basename(__file__), '-v', '-rw', '-s'])
