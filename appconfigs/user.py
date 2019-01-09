@@ -21,6 +21,7 @@ import time
 import configparser as cp
 from distutils.version import StrictVersion
 import shutil
+import copy
 
 
 class NoDefault:
@@ -100,7 +101,7 @@ class UserConfig(DefaultsConfig):
         self.raw = 1 if raw_mode else 0
         self.backup = backup
 
-        self.defaults = defaults
+        self.defaults = copy.deepcopy(defaults)
         if defaults is not None:
             self.reset_to_defaults(save=False)
         self._create_backup()
