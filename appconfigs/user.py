@@ -146,8 +146,6 @@ class UserConfig(DefaultsConfig):
         except (ValueError, TypeError):
             raise ValueError(warning)
         else:
-            if len(version.version) != 3:
-                raise ValueError(warning)
             return True
 
     def _load_old_defaults(self, old_version):
