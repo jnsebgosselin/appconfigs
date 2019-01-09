@@ -113,16 +113,18 @@ class UserConfig(DefaultsConfig):
             self.read(self.get_filename(), encoding='utf-8')
             self._save_new_defaults(defaults, version, path)
 
+            if defaults is None:
+                # If no defaults are defined, set .ini file settings as default
+                self.set_as_defaults()
+
             # Update Default options only if major/minor version is different.
+            self._check_version(version)
             old_version = self.get_version(version)
             if StrictVersion(version) != StrictVersion(old_version):
                 self._create_backup(version=old_version)
                 self._update_defaults(defaults, old_version)
                 self._remove_deprecated_options(old_version)
                 self.set_version(version, save=False)
-            if defaults is None:
-                # If no defaults are defined, set .ini file settings as default
-                self.set_as_defaults()
 
     def get_version(self, version='0.0.0'):
         """Return configuration (not application!) version."""
@@ -130,7 +132,22 @@ class UserConfig(DefaultsConfig):
 
     def set_version(self, version='0.0.0', save=True):
         """Set configuration (not application!) version"""
+        self._check_version(version)
         self.set('main', 'version', version, save=save)
+
+    @staticmethod
+    def _check_version(version):
+        """
+        Check that the format of version is as expected.
+        """
+        warning = ("Version number is incorrect: it must be a string "
+                   "with the X.Y.Z format.")
+        try:
+            version = StrictVersion(version)
+        except (ValueError, TypeError):
+            raise ValueError(warning)
+        else:
+            return True
 
     def _load_old_defaults(self, old_version):
         """Read old defaults."""
@@ -192,6 +209,10 @@ class UserConfig(DefaultsConfig):
         for section in self.sections():
             secdict = {}
             for option, value in self.items(section, raw=self.raw):
+                try:
+                    value = ast.literal_eval(value)
+                except (SyntaxError, ValueError):
+                    pass
                 secdict[option] = value
             self.defaults.append((section, secdict))
 
@@ -220,6 +241,10 @@ class UserConfig(DefaultsConfig):
         for sec, options in self.defaults:
             if sec == (section or 'main'):
                 options[option] = default_value
+                break
+        else:
+            self.defaults.append(
+                (section, {option: default_value}))
 
     def get(self, section, option, default=NoDefault):
         """Get an option from the specified section."""
@@ -240,17 +265,8 @@ class UserConfig(DefaultsConfig):
 
         # Use type of default_value to parse value correctly
         default_value = self.get_default(section, option)
-        if isinstance(default_value, bool):
-            value = ast.literal_eval(value)
-        elif isinstance(default_value, float):
-            value = float(value)
-        elif isinstance(default_value, int):
-            value = int(value)
-        elif isinstance(default_value, str):
-            pass
-        else:
+        if not isinstance(default_value, str):
             try:
-                # lists, tuples, ...
                 value = ast.literal_eval(value)
             except (SyntaxError, ValueError):
                 pass
@@ -264,12 +280,12 @@ class UserConfig(DefaultsConfig):
             self.set_default(section, option, default_value)
         if isinstance(default_value, bool):
             value = bool(value)
-        elif isinstance(default_value, float):
-            value = float(value)
         elif isinstance(default_value, int):
             value = int(value)
-        elif not isinstance(default_value, str):
-            value = repr(value)
+        elif isinstance(default_value, float):
+            value = float(value)
+        elif isinstance(default_value, str):
+            value = str(value)
         self._set(section, option, value, verbose)
         if save:
             self._save()
