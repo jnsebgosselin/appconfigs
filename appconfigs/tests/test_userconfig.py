@@ -75,6 +75,7 @@ def test_get_values(configdir):
     for section, options in DEFAULTS:
         for option, value in options.items():
             assert conf.get(section, option) == value
+            assert conf.get_default(section, option) == value
 
     # Get a value of an option that does not exists without providing a
     # default value.
