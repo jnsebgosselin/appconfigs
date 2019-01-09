@@ -29,8 +29,8 @@ def configdir(tmpdir):
 @pytest.fixture
 def defaults():
     return [('main',
-             {'option#1': 'value',
-              'option#2': '24.567',
+             {'option#1': 'àñïôú',
+              'option#2': '測試',
               'option#3': 24.567,
               'option#4': 22,
               'option#5': True,
@@ -202,5 +202,21 @@ def test_bump_version(configdir, defaults):
         'sec999_opt999_default')
 
 
+def test_set_as_defaults(configdir, defaults):
+    """
+    Test loading default value from an ini file when passing defaults=None.
+    """
+    conf = UserConfig(NAME, defaults=defaults, load=True, path=configdir,
+                      backup=True, version='0.1.0', raw_mode=True)
+
+    del conf
+    conf = UserConfig(NAME, defaults=None, load=True, path=configdir,
+                      backup=True, version='0.1.0', raw_mode=True)
+
+    for section, options in defaults:
+        for option, value in options.items():
+            assert conf.get_default(section, option) == value
+
+
 if __name__ == "__main__":
-    pytest.main(['-x', osp.basename(__file__), '-v', '-rw', '-s'])
+    pytest.main(['-x', osp.basename(__file__), '-vv', '-rw', '-s'])

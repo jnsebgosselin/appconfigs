@@ -113,6 +113,10 @@ class UserConfig(DefaultsConfig):
             self.read(self.get_filename(), encoding='utf-8')
             self._save_new_defaults(defaults, version, path)
 
+            if defaults is None:
+                # If no defaults are defined, set .ini file settings as default
+                self.set_as_defaults()
+
             # Update Default options only if major/minor version is different.
             self._check_version(version)
             old_version = self.get_version(version)
@@ -121,9 +125,6 @@ class UserConfig(DefaultsConfig):
                 self._update_defaults(defaults, old_version)
                 self._remove_deprecated_options(old_version)
                 self.set_version(version, save=False)
-            if defaults is None:
-                # If no defaults are defined, set .ini file settings as default
-                self.set_as_defaults()
 
     def get_version(self, version='0.0.0'):
         """Return configuration (not application!) version."""
@@ -208,6 +209,10 @@ class UserConfig(DefaultsConfig):
         for section in self.sections():
             secdict = {}
             for option, value in self.items(section, raw=self.raw):
+                try:
+                    value = ast.literal_eval(value)
+                except (SyntaxError, ValueError):
+                    pass
                 secdict[option] = value
             self.defaults.append((section, secdict))
 
