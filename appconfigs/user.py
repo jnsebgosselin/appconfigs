@@ -255,12 +255,12 @@ class UserConfig(DefaultsConfig):
             self.set_default(section, option, default_value)
         if isinstance(default_value, bool):
             value = bool(value)
-        elif isinstance(default_value, float):
-            value = float(value)
         elif isinstance(default_value, int):
             value = int(value)
-        elif not isinstance(default_value, str):
-            value = repr(value)
+        elif isinstance(default_value, float):
+            value = float(value)
+        elif isinstance(default_value, str):
+            value = str(value)
         self._set(section, option, value, verbose)
         if save:
             self._save()
