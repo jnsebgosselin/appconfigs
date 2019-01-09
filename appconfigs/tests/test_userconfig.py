@@ -22,7 +22,9 @@ DEFAULTS = [
         {'first_option': 'value',
          'second_option': 24.567,
          'third_option': 22,
-         'fourth_option': True}
+         'fourth_option': True,
+         'fifth_option': ['value', 22, 24.567, True],
+         'sixth_option': ('value', 22, 24.567, True)}
      )
 ]
 
@@ -57,6 +59,19 @@ def test_files_creation(configdir, backup_value):
     if backup_value is True:
         assert filecmp.cmp(conf.get_filename(), conf.get_filename() + '.bak',
                            shallow=False)
+
+
+def test_get_values(configdir):
+    """
+    Test that values are returned correctly with the right type.
+    """
+    conf = UserConfig(NAME, defaults=DEFAULTS, load=True, path=configdir,
+                      backup=True, version=CONF_VERSION, raw_mode=True)
+
+    for section, options in DEFAULTS:
+        for option, default_value in options.items():
+            conf_value = conf.get(section, option)
+            assert conf_value == default_value
 
 
 if __name__ == "__main__":
