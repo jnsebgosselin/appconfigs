@@ -15,7 +15,7 @@ LONG_DESCRIPTION = ("The appconfig module provides user configuration file "
                     "management features for Python applications. "
                     "It is based on the config module of the Spyder project, "
                     "which is available at "
-                    "https://github.com/spyder-ide/spyder).")
+                    "https://github.com/spyder-ide/spyder.")
 
 setup(name='appconfigs',
       version=__version__,
