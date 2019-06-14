@@ -1,4 +1,6 @@
 # appconfigs
+[![license](https://img.shields.io/pypi/l/appconfigs.svg)](./LICENSE)
+[![pypi version](https://img.shields.io/pypi/v/appconfigs.svg)](https://pypi.org/project/appconfigs/)
 [![Build status](https://ci.appveyor.com/api/projects/status/d5vg8c704m1el8pc/branch/master?svg=true)](https://ci.appveyor.com/project/jnsebgosselin/appconfigs/branch/master)
 [![codecov](https://codecov.io/gh/jnsebgosselin/appconfigs/branch/master/graph/badge.svg)](https://codecov.io/gh/jnsebgosselin/appconfigs)
 
