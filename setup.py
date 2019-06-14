@@ -17,6 +17,8 @@ LONG_DESCRIPTION = ("The appconfig module provides user configuration file "
                     "which is available at "
                     "https://github.com/spyder-ide/spyder.")
 
+INSTALL_REQUIRES = ['appdirs']
+
 setup(name='appconfigs',
       version=__version__,
       description=("User configuration file management features "
@@ -31,6 +33,7 @@ setup(name='appconfigs',
       packages=setuptools.find_packages(),
       package_data={},
       include_package_data=True,
+      install_requires=INSTALL_REQUIRES,
       classifiers=["Programming Language :: Python :: 3",
                    "License :: OSI Approved :: MIT License",
                    "Operating System :: OS Independent",
