@@ -7,7 +7,7 @@
 # (see spyder/__init__.py for details)
 # -----------------------------------------------------------------------------
 
-version_info = (0, 1, 0, 'dev0')
+version_info = (0, 1, 0)
 __version__ = '.'.join(map(str, version_info))
 __date__ = '08/01/2018'
 __project_url__ = "https://github.com/jnsebgosselin/appconfigs"
