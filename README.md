@@ -5,17 +5,42 @@
 [![codecov](https://codecov.io/gh/jnsebgosselin/appconfigs/branch/master/graph/badge.svg)](https://codecov.io/gh/jnsebgosselin/appconfigs)
 
 **AppConfigs** is a small Python module that provides user configuration file management features for Python applications. It is based on the config module of [Spyder](https://www.spyder-ide.org/), the scientific Python development environment.
+## How to install
+
+Simply install `appconfigs` with the command `pip install appconfigs`
 
 ## How to use
 
-First, we create a new Python file in which we (1) define the location
-where the user configuration files are going to be saved, (2) provide default
-values for the preferences and (3) setup the main configuration instance that
-we are going use in our app.
+First, you need to create a new Python file (`my_conf.py` for example) in which you :
 
-This is an example of how this file should look like:
+1. define the location where the user configuration files are going to be saved, 
+2. provide default values for the preferences,
+3. setup the main configuration instance that your app will use.
+
+### Configuration file setup
+
+Let start with a project structure like the one below with the configuration file `my_conf.py` located 
+in the folder `/conf` .
+
+```
+__init__.py
+main_app.py
+/config
+    | __init__.py
+    | my_conf.py
+/db_handler
+    | __init__.py
+    | my_beautiful_bd_handler.py 
+    | postgresql_proxy.py
+    | mysql_proxy.py
+```
+
+The example below shows the content of the `/conf/my_conf.py` file. 
 
 ```python
+# =============================================================================
+# MY_CONF.PY file content
+# =============================================================================
 from appconfigs.user import UserConfig
 from appconfigs.base import get_config_dir
 
@@ -61,24 +86,42 @@ except Exception:
                       backup=True, raw_mode=True)
 
 ```
+### Using the configuration in application files
 
-Then, we import the main configuration instance where we need it to
+We import the main configuration instance where needed and
 manage the preferences of our application.
 
-For example, to get the value of pref2 in section1, we would do:
-```
->>> from <path>.<to>.<our>.<config>.<file> import CONF
->>> CONF.get('section1', 'pref2')
-'blue'
+For example, to get the value of `pref2` in `section1` and use it in our `main.py` file, we would do:
+
+```python
+# =============================================================================
+# MAIN.PY file content
+# =============================================================================
+from conf.my_conf import CONF
+my_value = CONF.get('section1', 'pref2')
+print(my_value)
+>>> 'blue'
 ```
 Since no user defined value has been set yet for this preference,
 the default value is returned as expected.
 
-To set a new value for pref2 in section1, we would simply do:
+To set a new value for `pref2` in `section1`, we would simply do:
+```python
+# =============================================================================
+# MAIN.PY file content
+# =============================================================================
+from conf.my_conf import CONF
+my_value = CONF.get('section1', 'pref2')
+print(my_value)
+>>> 'blue'
+
+CONF.set('section1', 'pref2', 'red')
+my_value = CONF.get('section1', 'pref2')
+print(my_value)
+>>> 'red'
 ```
->>> from <path>.<to>.<our>.<config>.<file> import CONF
->>> CONF.set('section1', 'pref2', 'red')
->>> CONF.get('section1', 'pref2')
-'red'
-```
+
+### Where is the configuration stored ???
+
+
 
