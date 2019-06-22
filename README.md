@@ -24,7 +24,7 @@ First, you need to create a new Python file (`my_conf.py` for example) in which 
 ### Configuration file setup
 
 Let start with a project structure like the one below with the configuration file `my_conf.py` located 
-in the folder `/conf` .
+in the folder `/config` .
 
 ```
 __init__.py
