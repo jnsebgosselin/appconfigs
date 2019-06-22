@@ -7,7 +7,11 @@
 **AppConfigs** is a small Python module that provides user configuration file management features for Python applications. It is based on the config module of [Spyder](https://www.spyder-ide.org/), the scientific Python development environment.
 ## How to install
 
-Simply install `appconfigs` with the command `pip install appconfigs`
+Simply install `appconfigs` with the command :
+
+```commandlines
+pip install appconfigs
+```
 
 ## How to use
 
