@@ -5,15 +5,20 @@
 [![codecov](https://codecov.io/gh/jnsebgosselin/appconfigs/branch/master/graph/badge.svg)](https://codecov.io/gh/jnsebgosselin/appconfigs)
 
 **AppConfigs** is a small Python module that provides user configuration file management features for Python applications. It is based on the config module of [Spyder](https://www.spyder-ide.org/), the scientific Python development environment.
-## How to install
 
-Simply install `appconfigs` with the command :
+## Installation
+
+Simply installation of `appconfigs` with the `pip` command :
 
 ```commandlines
 pip install appconfigs
 ```
 
-## How to use
+## Requirements
+**AppConfigs** depends only the package below:
+- [appdirs](https://github.com/ActiveState/appdirs) : To retrieve User App's storage location
+
+## Get it started !!
 
 First, you need to create a new Python file (`my_conf.py` for example) in which you :
 
@@ -124,8 +129,36 @@ my_value = CONF.get('section1', 'pref2')
 print(my_value)
 >>> 'red'
 ```
+### How it really works ??
 
-### Where is the configuration stored ???
+#### Versionning
+**AppConfigs** support different configuration
+
+1. If you want to **change** the default value of a current option, you need to
+   do a MINOR update in config version, e.g. from 3.0.0 to 3.1.0
+2. If you want to **remove** options that are no longer needed in our codebase,
+   or if you want to **rename** options, then you need to do a MAJOR update in
+   version, e.g. from 3.0.0 to 4.0.0
+3. You don't need to touch this value if you're just adding a new option
+
+#### Configuration storage
+**AppConfigs** use the [appdirs](https://github.com/ActiveState/appdirs) package to store the configuration files.
+Because **AppConfigs** is just a configuration files handler, [appdirs](https://github.com/ActiveState/appdirs) is used
+to tell **AppConfigs** where to store the configs files.
+
+##### On Windows
+
+##### On Linux
+
+##### On Mac
+We don't do Mac here...
+
+### Tune it up !!
+
+#### Change the configuration storage location
+
+
+
 
 
 
