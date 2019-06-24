@@ -16,7 +16,7 @@ pip install appconfigs
 
 ## Requirements
 **AppConfigs** depends only the package below:
-- [appdirs](https://github.com/ActiveState/appdirs) : To retrieve User App's storage location
+- [appdirs](https://github.com/ActiveState/appdirs) : To retrieve the `User App's` storage location
 
 ## Get it started !!
 
@@ -132,7 +132,8 @@ print(my_value)
 ### How it really works ??
 
 #### Versionning
-**AppConfigs** support different configuration
+**AppConfigs** supports multiple configurations at the same time. This feature is mainly used when dealing
+with diverging configuration between different git branches. Usually, version naming should follow this pattern:
 
 1. If you want to **change** the default value of a current option, you need to
    do a MINOR update in config version, e.g. from 3.0.0 to 3.1.0
@@ -144,18 +145,29 @@ print(my_value)
 #### Configuration storage
 **AppConfigs** use the [appdirs](https://github.com/ActiveState/appdirs) package to store the configuration files.
 Because **AppConfigs** is just a configuration files handler, [appdirs](https://github.com/ActiveState/appdirs) is used
-to tell **AppConfigs** where to store the configs files.
+to tell **AppConfigs** where to store/get the configs files.
+
+[appdirs](https://github.com/ActiveState/appdirs) provide an API to access application folder like the `config`, `home`, 
+`log`, `data`, ... As we **AppConfigs** deals only with configuration files, these files are stored : 
 
 ##### On Windows
+On Windows (>= W.7) : 
+
+- If there is an application author: `C:\\Users\\[USERNAME]\\AppData\\Local\\[APPLICATION_AUTHOR]\\[APPLICATION_NAME]`
+- If there **is no** application author: `C:\\Users\\[USERNAME]\\AppData\\Local\\[APPLICATION_NAME]`
 
 ##### On Linux
-
+On Linux/Unix based OS, the config files are stored at : `~/.config/[APPLICATION_NAME]`
 ##### On Mac
-We don't do Mac here...
+We don't do Mac here...but...
+
+it's store at : `/Users/[USERNAME]/Library/Application Support/[APPLICATION_NAME]`
 
 ### Tune it up !!
 
 #### Change the configuration storage location
+
+ToDo!
 
 
 
