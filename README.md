@@ -6,16 +6,50 @@
 
 **AppConfigs** is a small Python module that provides user configuration file management features for Python applications. It is based on the config module of [Spyder](https://www.spyder-ide.org/), the scientific Python development environment.
 
-## How to use
+## Installation
 
-First, we create a new Python file in which we (1) define the location
-where the user configuration files are going to be saved, (2) provide default
-values for the preferences and (3) setup the main configuration instance that
-we are going use in our app.
+Simply installation of `appconfigs` with the `pip` command :
 
-This is an example of how this file should look like:
+```commandlines
+pip install appconfigs
+```
+
+## Requirements
+**AppConfigs** depends only the package below:
+- [appdirs](https://github.com/ActiveState/appdirs) : To retrieve the `User App's` storage location
+
+## Get it started !!
+
+First, you need to create a new Python file (`my_conf.py` for example) in which you :
+
+1. define the location where the user configuration files are going to be saved, 
+2. provide default values for the preferences,
+3. setup the main configuration instance that your app will use.
+
+### Configuration file setup
+
+Let start with a project structure like the one below with the configuration file `my_conf.py` located 
+in the folder `/config` .
+
+```
+__init__.py
+main_app.py
+/config
+    | __init__.py
+    | my_conf.py
+/db_handler
+    | __init__.py
+    | my_beautiful_bd_handler.py 
+    | postgresql_proxy.py
+    | mysql_proxy.py
+```
+
+The example below shows the content of the `/conf/my_conf.py` file. 
 
 ```python
+# =============================================================================
+# MY_CONF.PY file content
+# =============================================================================
 from appconfigs.user import UserConfig
 from appconfigs.base import get_config_dir
 
@@ -41,13 +75,6 @@ DEFAULTS = [
 # =============================================================================
 # Config instance
 # =============================================================================
-# IMPORTANT NOTES:
-# 1. If you want to *change* the default value of a current option, you need to
-#    do a MINOR update in config version, e.g. from 3.0.0 to 3.1.0
-# 2. If you want to *remove* options that are no longer needed in our codebase,
-#    or if you want to *rename* options, then you need to do a MAJOR update in
-#    version, e.g. from 3.0.0 to 4.0.0
-# 3. You don't need to touch this value if you're just adding a new option
 CONF_VERSION = '1.0.0'
 
 # Setup the main configuration instance.
@@ -61,24 +88,82 @@ except Exception:
                       backup=True, raw_mode=True)
 
 ```
+### Using the configuration in application files
 
-Then, we import the main configuration instance where we need it to
+We import the main configuration instance where needed and
 manage the preferences of our application.
 
-For example, to get the value of pref2 in section1, we would do:
-```
->>> from <path>.<to>.<our>.<config>.<file> import CONF
->>> CONF.get('section1', 'pref2')
-'blue'
+For example, to get the value of `pref2` in `section1` and use it in our `main.py` file, we would do:
+
+```python
+# =============================================================================
+# MAIN.PY file content
+# =============================================================================
+from conf.my_conf import CONF
+my_value = CONF.get('section1', 'pref2')
+print(my_value)
+>>> 'blue'
 ```
 Since no user defined value has been set yet for this preference,
 the default value is returned as expected.
 
-To set a new value for pref2 in section1, we would simply do:
+To set a new value for `pref2` in `section1`, we would simply do:
+```python
+# =============================================================================
+# MAIN.PY file content
+# =============================================================================
+from conf.my_conf import CONF
+my_value = CONF.get('section1', 'pref2')
+print(my_value)
+>>> 'blue'
+
+CONF.set('section1', 'pref2', 'red')
+my_value = CONF.get('section1', 'pref2')
+print(my_value)
+>>> 'red'
 ```
->>> from <path>.<to>.<our>.<config>.<file> import CONF
->>> CONF.set('section1', 'pref2', 'red')
->>> CONF.get('section1', 'pref2')
-'red'
-```
+### How it really works ??
+
+#### Versionning
+**AppConfigs** supports multiple configurations at the same time. This feature is mainly used when dealing
+with diverging configuration between different git branches. Usually, version naming should follow this pattern:
+
+1. If you want to **change** the default value of a current option, you need to
+   do a MINOR update in config version, e.g. from 3.0.0 to 3.1.0
+2. If you want to **remove** options that are no longer needed in our codebase,
+   or if you want to **rename** options, then you need to do a MAJOR update in
+   version, e.g. from 3.0.0 to 4.0.0
+3. You don't need to touch this value if you're just adding a new option
+
+#### Configuration storage
+**AppConfigs** use the [appdirs](https://github.com/ActiveState/appdirs) package to store the configuration files.
+Because **AppConfigs** is just a configuration files handler, [appdirs](https://github.com/ActiveState/appdirs) is used
+to tell **AppConfigs** where to store/get the configs files.
+
+[appdirs](https://github.com/ActiveState/appdirs) provide an API to access application folder like the `config`, `home`, 
+`log`, `data`, ... As we **AppConfigs** deals only with configuration files, these files are stored : 
+
+##### On Windows
+On Windows (>= W.7) : 
+
+- If there is an application author: `C:\\Users\\[USERNAME]\\AppData\\Local\\[APPLICATION_AUTHOR]\\[APPLICATION_NAME]`
+- If there **is no** application author: `C:\\Users\\[USERNAME]\\AppData\\Local\\[APPLICATION_NAME]`
+
+##### On Linux
+On Linux/Unix based OS, the config files are stored at : `~/.config/[APPLICATION_NAME]`
+##### On Mac
+We don't do Mac here...but...
+
+it's store at : `/Users/[USERNAME]/Library/Application Support/[APPLICATION_NAME]`
+
+### Tune it up !!
+
+#### Change the configuration storage location
+
+ToDo!
+
+
+
+
+
 

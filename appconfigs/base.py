@@ -13,11 +13,16 @@ from appdirs import AppDirs
 
 
 def get_home_dir():
-    """Return user home directory."""
-    return osp.expanduser('~')
+	"""Return user home directory."""
+	return osp.expanduser('~')
 
 
-def get_config_dir(appname):
-    """Return gwhat config directory."""
-    dirs = AppDirs(appname, appauthor=False)
-    return dirs.user_config_dir
+def get_config_dir(appname, appauthor=False):
+	"""Get the application config directory.
+	:type appname : str
+	:param appname : Application name.
+	:param appauthor : Application author. By default, this value is set to False.
+	:rtype : str
+	:return : Return full path to the user-specific config dir for this application """
+	dirs = AppDirs(appname, appauthor=appauthor)
+	return dirs.user_config_dir
