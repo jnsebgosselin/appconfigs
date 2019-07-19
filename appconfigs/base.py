@@ -18,17 +18,23 @@ def get_home_dir():
     return osp.expanduser('~')
 
 
-def get_config_dir(appname, appauthor=False):
+def get_config_dir(appname: str, appauthor: bool = False) -> str:
     """
     Get and return the application config directory.
 
-    :type appname: str
-    :param appname: Application name.
-    :param appauthor: Application author. By default, this value is set
-        to False.
-    :rtype: str
-    :return: Return full path to the user-specific config dir for
-        this application.
+    Parameters
+    ----------
+    appname: str
+        The name of the application for which the config directory is fetched.
+    appauthor: str
+        The name of the author or distributing body for this application
+        (only used on Windows). Typically it is the owning company name.
+        You may pass False to disable it.
+
+    Returns
+    -------
+    str
+     The full path to the user-specific config dir for this application.
     """
     config_dir = (os.environ.get(appname.upper() + '_DIR') or
                   AppDirs(appname, appauthor=appauthor).user_config_dir)
