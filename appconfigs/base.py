@@ -14,7 +14,14 @@ from appdirs import AppDirs
 
 
 def get_home_dir():
-    """Return user home directory."""
+    """
+    Return user home directory.
+
+    Returns
+    -------
+    str
+        The full path to the user home directory.
+    """
     return osp.expanduser('~')
 
 
