@@ -20,7 +20,9 @@ NAME = 'user_config_tests'
 CONF_VERSION = '0.1.0'
 
 
+# =============================================================================
 # ---- Pytest fixtures
+# =============================================================================
 @pytest.fixture
 def configdir(tmpdir):
     return osp.join(str(tmpdir), 'UserConfigTests')
@@ -36,7 +38,7 @@ def defaults():
               'option#5': True,
               'option#6': ['value', 22, 24.567, True],
               'option#7': ('value', 22, 24.567, True),
-              'option#8': {'suboption': ('value',  24.567)},
+              'option#8': {'suboption': ('value', 24.567)},
               }),
             ('section#1',
              {'option#1': 123.456,
@@ -44,7 +46,9 @@ def defaults():
               })]
 
 
+# =============================================================================
 # ---- Tests
+# =============================================================================
 @pytest.mark.parametrize("backup_value", [True, False])
 def test_files_creation(configdir, backup_value, defaults):
     """
