@@ -8,6 +8,7 @@
 # ---- Standard library imports
 import os
 import os.path as osp
+from typing import Union
 
 # ---- Third party library imports
 from appdirs import AppDirs
@@ -25,7 +26,7 @@ def get_home_dir():
     return osp.expanduser('~')
 
 
-def get_config_dir(appname: str, appauthor: bool = False) -> str:
+def get_config_dir(appname: str, appauthor: Union[str, bool] = False) -> str:
     """
     Get and return the application config directory.
 
@@ -33,7 +34,7 @@ def get_config_dir(appname: str, appauthor: bool = False) -> str:
     ----------
     appname: str
         The name of the application for which the config directory is fetched.
-    appauthor: str
+    appauthor: str, bool
         The name of the author or distributing body for this application
         (only used on Windows). Typically it is the owning company name.
         You may pass False to disable it.
