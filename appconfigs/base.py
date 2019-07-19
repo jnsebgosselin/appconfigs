@@ -6,6 +6,7 @@
 # -----------------------------------------------------------------------------
 
 # ---- Standard library imports
+import os
 import os.path as osp
 
 # ---- Third party library imports
@@ -29,5 +30,7 @@ def get_config_dir(appname, appauthor=False):
     :return: Return full path to the user-specific config dir for
         this application.
     """
-    dirs = AppDirs(appname, appauthor=appauthor)
-    return dirs.user_config_dir
+    config_dir = (os.environ.get(appname.upper() + '_DIR') or
+                  AppDirs(appname, appauthor=appauthor).user_config_dir)
+
+    return config_dir
