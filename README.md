@@ -138,9 +138,7 @@ You can define where your application will store it's user data in any directory
 
 As shown in the example above, you can also use the utility function `get_config_dir` from the `appconfigs.base` module that uses the [appdirs](https://github.com/ActiveState/appdirs) package to automatically define the directory that your app should use for storing user data. By default, this directory is defined as :
 
-##### On Windows :
-On Windows 7 and above : 
-
+##### On Windows 7 and above :
 - If there is an application author: `C:\Users\[USERNAME]\AppData\Local\[APPLICATION_AUTHOR]\[APPLICATION_NAME]`
 - If there is **no** application author: `C:\Users\[USERNAME]\AppData\Local\[APPLICATION_NAME]`
 
@@ -150,4 +148,4 @@ On Linux/Unix based OS, the config files are stored at : `~/.config/[APPLICATION
 ##### On Mac :
 On macOS, the config files are stored at : `/Users/[USERNAME]/Library/Application Support/[APPLICATION_NAME]`
 
-You can also define a custom user config directory for your application through an os environment variable named after that of you application in caps followed by the suffix `'_DIR'`. When a value for such a variable exists, `get_config_dir` will return that value instead of the default one. So for the example above, we could define a custom user config directory for our app named `my_app_name` in the os environment variable named `MY_APP_NAME_DIR`.
+You can also define a **custom user config directory** for your application through an os environment variable named after that of you application in caps followed by the suffix `'_DIR'`. When a value for such a variable exists, `get_config_dir` will return that value instead of the default one. So for the example above, we could define a custom user config directory for our app named `my_app_name` in the os environment variable named `MY_APP_NAME_DIR`.
