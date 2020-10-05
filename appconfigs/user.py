@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-# Copyright © Spyder Project Contributors
+# Copyright © AppConfigs Contributors
+# Copyright © 2009–2018 Spyder Project Contributors
 #
 # This file is a derivative work of codes taken from the
 # Spyder project, licensed under the terms of the MIT License.
